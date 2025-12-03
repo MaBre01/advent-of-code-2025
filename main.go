@@ -12,7 +12,9 @@ func main() {
 	//dayOnePartOne()
 	//dayOnePartTwo()
 	//dayTwoPartOne()
-	dayTwoPartTwo()
+	//dayTwoPartTwo()
+	//dayThreePartOne()
+	dayThreePartTwo()
 }
 
 func dayOnePartOne() {
@@ -220,4 +222,112 @@ func dayTwoPartTwo() {
 	}
 
 	fmt.Printf("Count: %d\n", counter)
+}
+
+func dayThreePartOne() {
+	f, err := os.Open("data/data_3.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	joltage := 0
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		lineLen := len(line)
+
+		leftPosition := 0
+		left, err := strconv.Atoi(string(line[leftPosition]))
+		if nil != err {
+			panic(err)
+		}
+
+		for i := leftPosition; i < lineLen-1; i++ {
+			newLeft, err := strconv.Atoi(string(line[i]))
+			if nil != err {
+				panic(err)
+			}
+
+			if newLeft > left {
+				left = newLeft
+				leftPosition = i
+			}
+		}
+
+		rightPosition := leftPosition + 1
+		right, err := strconv.Atoi(string(line[rightPosition]))
+		if nil != err {
+			panic(err)
+		}
+
+		for i := rightPosition; i < lineLen; i++ {
+			newRight, err := strconv.Atoi(string(line[i]))
+			if nil != err {
+				panic(err)
+			}
+
+			if newRight > right {
+				right = newRight
+				rightPosition = i
+			}
+		}
+
+		joltage += left*10 + right
+	}
+
+	fmt.Printf("total output joltage: %d\n", joltage)
+}
+
+func dayThreePartTwo() {
+	f, err := os.Open("data/data_3.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	totalJoltage := 0
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		lineLen := len(line)
+
+		batteryStack := make([]string, 0)
+		numberPosition := 0
+
+		for len(batteryStack) < 12 {
+			number, err := strconv.Atoi(string(line[numberPosition]))
+			if nil != err {
+				panic(err)
+			}
+
+			for i := numberPosition; i <= lineLen-12+len(batteryStack); i++ {
+				newNumber, err := strconv.Atoi(string(line[i]))
+				if nil != err {
+					panic(err)
+				}
+
+				if newNumber > number {
+					number = newNumber
+					numberPosition = i
+				}
+			}
+
+			numberString := strconv.Itoa(number)
+			batteryStack = append(batteryStack, numberString)
+			numberPosition++
+		}
+
+		stringJoltage := strings.Join(batteryStack, "")
+		joltage, err := strconv.Atoi(stringJoltage)
+		if nil != err {
+			panic(err)
+		}
+
+		totalJoltage += joltage
+	}
+
+	fmt.Printf("total output joltage: %d\n", totalJoltage)
 }
