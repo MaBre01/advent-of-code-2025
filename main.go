@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
-	dayOnePartOne()
-	dayOnePartTwo()
+	//dayOnePartOne()
+	//dayOnePartTwo()
+	//dayTwoPartOne()
+	dayTwoPartTwo()
 }
 
 func dayOnePartOne() {
@@ -110,4 +113,111 @@ func dayOnePartTwo() {
 	}
 
 	fmt.Printf("Password: %d\n", zeroCount)
+}
+
+func dayTwoPartOne() {
+	content, err := os.ReadFile("data/data_2.txt")
+	if nil != err {
+		panic(err)
+	}
+
+	stringContent := string(content)
+	ranges := strings.SplitSeq(stringContent, ",")
+	counter := 0
+
+	for ran := range ranges {
+		allIds := strings.Split(ran, "-")
+
+		if len(allIds) != 2 {
+			panic("The range must contain one dash")
+		}
+
+		firstId, err := strconv.Atoi(allIds[0])
+		if nil != err {
+			panic(err)
+		}
+
+		lastId, err := strconv.Atoi(allIds[1])
+		if nil != err {
+			panic(err)
+		}
+
+		for i := firstId; i <= lastId; i++ {
+			current := strconv.Itoa(i)
+			if len(current)%2 == 1 {
+				continue
+			}
+
+			halfLen := len(current) / 2
+			left := current[0:halfLen]
+			right := current[halfLen:]
+
+			if strings.Compare(left, right) == 0 {
+				counter += i
+			}
+		}
+	}
+
+	fmt.Printf("Count: %d\n", counter)
+}
+
+func dayTwoPartTwo() {
+	content, err := os.ReadFile("data/data_2.txt")
+	if nil != err {
+		panic(err)
+	}
+
+	stringContent := string(content)
+	ranges := strings.SplitSeq(stringContent, ",")
+	counter := 0
+
+	for ran := range ranges {
+		allIds := strings.Split(ran, "-")
+
+		if len(allIds) != 2 {
+			panic("The range must contain one dash")
+		}
+
+		firstId, err := strconv.Atoi(allIds[0])
+		if nil != err {
+			panic(err)
+		}
+
+		lastId, err := strconv.Atoi(allIds[1])
+		if nil != err {
+			panic(err)
+		}
+
+	out:
+		for i := firstId; i <= lastId; i++ {
+			current := strconv.Itoa(i)
+			stringLen := len(current)
+			divisor := 2
+
+			for divisor <= stringLen {
+				if stringLen%divisor != 0 {
+					divisor++
+					continue
+				}
+
+				invalid := true
+				length := stringLen / divisor
+				comparedString := current[0:length]
+				for j := length; j < stringLen; j += length {
+					if strings.Compare(comparedString, current[j:j+length]) != 0 {
+						invalid = false
+					}
+				}
+
+				if invalid {
+					counter += i
+					continue out
+				}
+
+				divisor++
+			}
+		}
+	}
+
+	fmt.Printf("Count: %d\n", counter)
 }
